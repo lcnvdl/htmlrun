@@ -13,12 +13,10 @@ class Program {
 
     fill(body) {
         const $ = cheerio.load(body);
-        const parser = new HtmlParser($);
 
         let all = $("body > *").toArray();
 
         all.forEach((e, i) => {
-
             if (!$(e).is("h1") && !$(e).is("h2") && !$(e).is("h3")) {
                 return;
             }
@@ -67,17 +65,27 @@ class Program {
             }
             else {
                 //  Import with alias
-
                 const parser = new HtmlParser($);
                 const spl = parser.limitSpaces(text).trim().split(" ");
 
-                if (spl.length !== 3 || spl[1].toLowerCase().trim() !== "from") {
+                const aliasTypes = ["method", "class"];
+
+                if (spl.length !== 4 || spl[2].toLowerCase().trim() !== "from") {
                     throw new Error("Syntax error in import line");
+                }
+
+                const aliasType = spl[1].toLowerCase().trim();
+                if (aliasTypes.indexOf(aliasType) === -1) {
+                    throw new Error(`Invalid alias type: ${aliasType}`);
                 }
 
                 const alias = spl[0].trim();
 
-                imprt = new ProgramImport(url, name, alias);
+                imprt = new ProgramImport(url, name, alias, aliasType);
+            }
+
+            if (this.imports.some(m => (m.name === imprt.name && m.alias === imprt.alias) || (m.name === imprt.name && m.url !== imprt.url))) {
+                throw new Error("Duplicated imports");
             }
 
             this.imports.push(imprt);
