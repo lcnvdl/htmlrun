@@ -3,7 +3,6 @@ class KlassMember {
         this.name = name || "";
         this.description = description || "";
         this.visibility = visibility || "+";
-        this.definitions = {};
     }
 
     get hasDefinitions() {
