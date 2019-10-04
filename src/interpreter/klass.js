@@ -1,6 +1,7 @@
 const cheerio = require('cheerio');
 const HtmlParser = require("./html-parser");
 const KlassMethod = require("./klass-method");
+const KlassMethodArgument = require("./klass-method-argument");
 const KlassAttribute = require("./klass-attribute");
 
 class Klass {
@@ -59,12 +60,12 @@ class Klass {
 
         for (let i = 0; i < trs.length; i++) {
             let tr = $(trs.get(i));
-            let tds = tr.find("td");
+            let tds = tr.find("td").toArray();
 
             if (tds.length === 1) {
-                let possibleSection = tds.first().text().toLowerCase().trim();
+                let possibleSection = $(tds[0]).text().toLowerCase().trim();
                 if (possibleSection !== "attributes" && possibleSection !== "methods") {
-                    throw new Error(`Invalid section: ${possibleSection}`);
+                    throw new Error(`Invalid section in class ${this.name}: ${possibleSection}`);
                 }
 
                 section = possibleSection;
@@ -85,8 +86,46 @@ class Klass {
         }
     }
 
+    hasMethod(name) {
+        return this.methods.some(m => m.name === name);
+    }
+
+    getMethod(name) {
+        return this.methods.find(m => m.name === name);
+    }
+
+    addDefinition(definition) {
+        definition.methods.forEach(method => {
+            if (!this.hasMethod(method.name)) {
+                throw new Error(`Undeclared method: ${method.name}`);
+            }
+
+            this.getMethod(method.name).definitions = method.definitions;
+        });
+    }
+
     _addMethodDeclaration(declaration, description) {
-        throw new Error("Not implemented");
+        if (["+", "-", "~"].indexOf(declaration[0]) === -1) {
+            throw new Error(`Visibility not specified for method in class ${this.name}`);
+        }
+
+        const visibility = declaration[0];
+
+        declaration = declaration.substr(1).trim();
+
+        let params = "";
+
+        if (declaration.indexOf("(") !== -1) {
+            params = declaration.substr(declaration.indexOf("(") + 1);
+            params = params.substr(0, params.indexOf(")"));
+            declaration = declaration.substr(0, declaration.indexOf("("));
+        }
+
+        let name = declaration;
+        let parameters = params.split(",").map(m => new KlassMethodArgument(m.trim()));
+
+        let method = new KlassMethod(name, visibility, description, parameters);
+        this.methods.push(method);
     }
 
     _addAttributeDeclaration(declaration, description) {

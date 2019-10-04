@@ -58,5 +58,37 @@ describe("Klass", () => {
             expect(klass.parent).to.equal("Native");
         });
 
+        it("should assign a class method", () => {
+            klass.fill("<h1>Class</h1>\n<table><thead><tr><th>User</th><th></th></tr></thead><tbody><tr><td colspan='2'>Methods</td></tr><tr><td>+ Log(text)</td><td>Test method</td></tr></tbody></table>");
+            expect(klass.methods.length).to.equal(1);
+            expect(klass.methods[0].name).to.equal("Log");
+            expect(klass.methods[0].description).to.equal("Test method");
+            expect(klass.methods[0].parameters.length).to.equal(1);
+            expect(klass.methods[0].parameters[0].name).to.equal("text");
+        });
+
+        it("add method should fail if visibility doesn't exists", () => {
+            let error = null;
+            try {
+                klass.fill("<h1>Class</h1>\n<table><thead><tr><th>User</th><th></th></tr></thead><tbody><tr><td colspan='2'>Methods</td></tr><tr><td>Log(text)</td><td>Test method</td></tr></tbody></table>");
+            }
+            catch (err) {
+                error = err;
+            }
+
+            expect(error).to.be.ok;
+        });
+
+        it("add method should fail if the name already exists", () => {
+            let error = null;
+            try {
+                klass.fill("<h1>Class</h1>\n<table><thead><tr><th>User</th><th></th></tr></thead><tbody><tr><td colspan='2'>Methods</td></tr><tr><td>+ Log(text)</td><td>Test method</td></tr><tr><td>Log(text)</td><td>Test method</td></tr></tbody></table>");
+            }
+            catch (err) {
+                error = err;
+            }
+
+            expect(error).to.be.ok;
+        });
     });
 });
