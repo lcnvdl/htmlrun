@@ -6,6 +6,10 @@ class KlassMethod extends KlassMember {
         this.parameters = parameters;
         this.definitions = {};
     }
+
+    get hasDefinitions() {
+        return Object.keys(this.definitions).length > 0;
+    }
 }
 
 module.exports = KlassMethod;
