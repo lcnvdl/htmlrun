@@ -2,6 +2,8 @@ const cheerio = require('cheerio');
 const Metadata = require("./metadata");
 
 const http = require("http");
+const fs = require("fs");
+const path = require("path");
 
 const Constructors = {
     klass: () => new (require("./interpreter/klass"))(),
@@ -9,23 +11,9 @@ const Constructors = {
 };
 
 class Factory {
-    static createInstance(url) {
-        return new Promise((resolve, reject) => {
-            const req = http.get(url, res => {
-                res.setEncoding("utf8");
-                res.on("data", function (chunk) {
-                    content += chunk;
-                });
-
-                res.on("end", function () {
-                    resolve(Factory.createInstanceFromContent(content));
-                });
-            }).on('error', function (e) {
-                reject(e);
-            });
-
-            req.end();
-        });
+    static async createInstance(url, workingDirectory) {
+        const content = await this._getContent(url, workingDirectory);
+        return Factory.createInstanceFromContent(content);
     }
 
     static createInstanceFromContent(content) {
@@ -54,6 +42,41 @@ class Factory {
         let instance = Constructors[runtime]();
         instance.fill($("body").html(), metatags);
         return instance;
+    }
+
+    static _getContent(url, workingDirectory) {
+        return new Promise((resolve, reject) => {
+
+            if (url[0] === ".") {
+                try {
+                    let file = url;
+                    if (workingDirectory) {
+                        file = path.join(workingDirectory, file);
+                    }
+
+                    resolve(fs.readFileSync(file, "utf8"));
+                }
+                catch (err) {
+                    reject(err);
+                }
+            }
+            else {
+                const req = http.get(url, res => {
+                    res.setEncoding("utf8");
+                    res.on("data", function (chunk) {
+                        content += chunk;
+                    });
+
+                    res.on("end", function () {
+                        resolve(content);
+                    });
+                }).on('error', function (e) {
+                    reject(e);
+                });
+
+                req.end();
+            }
+        });
     }
 }
 

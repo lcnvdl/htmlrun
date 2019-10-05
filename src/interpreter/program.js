@@ -11,10 +11,12 @@ class Program {
         this.instructions = [];
     }
 
-    fill(body) {
+    fill(body, metatags) {
         const $ = cheerio.load(body);
 
         let all = $("body > *").toArray();
+
+        this.type = (metatags ? metatags.runtime : null) || "console";
 
         all.forEach((e, i) => {
             if (!$(e).is("h1") && !$(e).is("h2") && !$(e).is("h3")) {
