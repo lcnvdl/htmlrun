@@ -1,7 +1,9 @@
+/* eslint-disable no-eval */
 /** @typedef {import('../interpreter/program')} Program */
 
 const Factory = require("../factory");
 const Context = require("./context");
+const KlassMethod = require("../interpreter/klass-method");
 
 class Runtime {
 
@@ -22,12 +24,62 @@ class Runtime {
         for (let i = 0; i < program.imports.length; i++) {
             const imprt = program.imports[i];
             let mod = await Factory.createInstance(imprt.url, settings.workingDirectory);
-            context.addModule(mod);
+            context.addModule(imprt, mod);
         }
 
         return context;
     }
 
+    /**
+     * @param {Context} context Context
+     */
+    run(context) {
+        if (!context.program) {
+            throw new Error("The context is not a program");
+        }
+
+        let instructions = context.program.instructions;
+        /** @type {[]} */
+        let current;
+
+        while (instructions.length > 0) {
+            current = instructions.pop();
+
+            const name = current[0];
+            let variable = context.getOrLoadVariable(name);
+            if (variable instanceof KlassMethod) {
+                /** @type {KlassMethod} */
+                const method = variable;
+                const definition = method.definitions["node"];
+
+                if (!definition) {
+                    throw new Error(`The method ${name} is declared but not defined.`);
+                }
+
+                current.forEach((m, i) => {
+                    if (i > 0) {
+                        const param = method.parameters[i - 1];
+                        if (!param) {
+                            throw new Error(`Wrong number of parameters calling the method ${name}`);
+                        }
+                        
+                        definition.replace(param.name, `"${m}"`);
+                    }
+                });
+
+                let result = context.lastValue;
+
+                eval(`result = ${definition}`);
+
+                if (typeof result !== "undefined") {
+                    context.lastValue = result;
+                }
+            }
+            else {
+                throw new Error("Not implemented");
+            }
+        }
+    }
 }
 
 module.exports = Runtime;

@@ -241,7 +241,7 @@ module.exports = {
         "prefer-reflect": "error",
         "prefer-rest-params": "error",
         "prefer-spread": "error",
-        "prefer-template": "error",
+        "prefer-template": "off",
         "quote-props": "off",
         "quotes": ["error", "double"],
         "radix": "error",
@@ -262,10 +262,7 @@ module.exports = {
             "last"
         ],
         "sort-imports": "error",
-        "sort-keys": [
-            "error",
-            "desc"
-        ],
+        "sort-keys": "error",
         "sort-vars": "error",
         "space-before-blocks": "error",
         "space-before-function-paren": "off",

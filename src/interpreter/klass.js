@@ -9,6 +9,8 @@ class Klass {
         this.name = "";
         this.parent = "";
 
+        this.metatags = {};
+
         /** @type {KlassAttribute[]} */
         this.attributes = [];
         /** @type {KlassMethod[]} */
@@ -17,8 +19,11 @@ class Klass {
 
     /**
      * @param {string} body Body
+     * @param {*} metatags Metatags
      */
-    fill(body) {
+    fill(body, metatags) {
+        this.metatags = metatags;
+
         const $ = cheerio.load(body);
         const parser = new HtmlParser($);
         const table = $("table");
@@ -102,6 +107,10 @@ class Klass {
 
             this.getMethod(method.name).definitions = method.definitions;
         });
+    }
+
+    applyDefinitions() {
+        throw new Error("Not implemented");
     }
 
     _addMethodDeclaration(declaration, description) {

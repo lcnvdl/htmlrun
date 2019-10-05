@@ -5,14 +5,25 @@ const fs = require("fs");
 const path = require("path");
 
 const Constructors = {
-    klass: () => new (require("./interpreter/klass"))(),
+    class: () => new (require("./interpreter/klass"))(),
     console: () => new (require("./interpreter/program"))()
 };
 
 class Factory {
     static async createInstance(url, workingDirectory) {
         const content = await this._getContent(url, workingDirectory);
-        return Factory.createInstanceFromContent(content, workingDirectory);
+        const result = Factory.createInstanceFromContent(content, workingDirectory);
+
+        if (result.metatags && result.metatags.runtime === "class") {
+            const definitionsUrl = url.substr(0, url.lastIndexOf(".html")) + ".def.html";
+            const definitionsContent = await this.createInstance(definitionsUrl, workingDirectory);
+
+            if (definitionsContent) {
+                result.applyDefinitions(definitionsContent);
+            }
+        }
+
+        return result;
     }
 
     static createInstanceFromContent(content, workingDirectory) {
@@ -22,16 +33,21 @@ class Factory {
         let metatags = {};
 
         $("meta").each((i, e) => {
-            if (e.attribs["name"] === "runtime") {
-                let val = e.attribs["value"];
-                runtime = val;
+            const meta = $(e);
+            const name = meta.attr("name");
+            if (name) {
+                const val = meta.attr("value");
+                if (name === "runtime") {
+                    runtime = val;
+                }
+                else {
+                    metatags[name] = val;
+                }
             }
-
-            metatags[e.attribs["name"]] = e.attribs["value"];
         });
 
         if (!runtime) {
-            runtime = "console";
+            throw new Error("Runtime type is not specified in this file.");
         }
 
         if (!Constructors[runtime]) {
