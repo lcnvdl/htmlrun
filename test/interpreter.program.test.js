@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-expressions */
 const Program = require("../src/interpreter/program");
 const { expect } = require("chai");
-const cheerio = require('cheerio');
+const cheerio = require("cheerio");
 
 let program;
 let content;

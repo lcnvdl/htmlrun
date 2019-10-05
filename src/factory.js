@@ -1,5 +1,4 @@
-const cheerio = require('cheerio');
-const Metadata = require("./metadata");
+const cheerio = require("cheerio");
 
 const http = require("http");
 const fs = require("fs");
@@ -13,16 +12,16 @@ const Constructors = {
 class Factory {
     static async createInstance(url, workingDirectory) {
         const content = await this._getContent(url, workingDirectory);
-        return Factory.createInstanceFromContent(content);
+        return Factory.createInstanceFromContent(content, workingDirectory);
     }
 
-    static createInstanceFromContent(content) {
+    static createInstanceFromContent(content, workingDirectory) {
         const $ = cheerio.load(content);
 
         let runtime;
         let metatags = {};
 
-        $("metatag").each((i, e) => {
+        $("meta").each((i, e) => {
             if (e.attribs["name"] === "runtime") {
                 let val = e.attribs["value"];
                 runtime = val;
@@ -40,7 +39,7 @@ class Factory {
         }
 
         let instance = Constructors[runtime]();
-        instance.fill($("body").html(), metatags);
+        instance.fill($("body").html(), metatags, { workingDirectory });
         return instance;
     }
 
@@ -61,6 +60,7 @@ class Factory {
                 }
             }
             else {
+                let content = "";
                 const req = http.get(url, res => {
                     res.setEncoding("utf8");
                     res.on("data", function (chunk) {
@@ -70,7 +70,7 @@ class Factory {
                     res.on("end", function () {
                         resolve(content);
                     });
-                }).on('error', function (e) {
+                }).on("error", function (e) {
                     reject(e);
                 });
 

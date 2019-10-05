@@ -1,4 +1,4 @@
-const cheerio = require('cheerio');
+const cheerio = require("cheerio");
 const HtmlParser = require("./html-parser");
 const KlassMethod = require("./klass-method");
 const KlassMethodArgument = require("./klass-method-argument");
@@ -121,15 +121,26 @@ class Klass {
             declaration = declaration.substr(0, declaration.indexOf("("));
         }
 
-        let name = declaration;
-        let parameters = params.split(",").map(m => new KlassMethodArgument(m.trim()));
+        const name = declaration;
+        const parameters = params.split(",").map(m => new KlassMethodArgument(m.trim()));
 
-        let method = new KlassMethod(name, visibility, description, parameters);
+        const method = new KlassMethod(name, visibility, description, parameters);
         this.methods.push(method);
     }
 
     _addAttributeDeclaration(declaration, description) {
-        throw new Error("Not implemented");
+        if (["+", "-", "~"].indexOf(declaration[0]) === -1) {
+            throw new Error(`Visibility not specified for method in class ${this.name}`);
+        }
+
+        const visibility = declaration[0];
+
+        declaration = declaration.substr(1).trim();
+
+        const name = declaration;
+
+        const attribute = new KlassAttribute(name, visibility, description);
+        this.attributes.push(attribute);
     }
 
     static isValidClassName(n) {

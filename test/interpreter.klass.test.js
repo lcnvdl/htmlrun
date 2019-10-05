@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 const Klass = require("../src/interpreter/klass");
 const { expect } = require("chai");
 

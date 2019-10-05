@@ -1,17 +1,22 @@
+/* eslint-disable no-unused-expressions */
 /** @typedef {import("../src/interpreter/program")} Program */
 const Runtime = require("../src/runtime/runtime");
 const Factory = require("../src/factory");
 const { expect } = require("chai");
+const path = require("path");
 
 /** @type {Runtime} */
 let runtime;
 /** @type {Program} */
 let program;
+/** @type {string} */
+let folder;
 
 describe("Runtime", () => {
     beforeEach(async () => {
         runtime = new Runtime();
-        program = await Factory.createInstance("../examples/01-hello-world.html", __dirname);
+        folder = path.join(__dirname, "../examples");
+        program = await Factory.createInstance("./01-hello-world.html", folder);
     });
 
     describe("#preparation", () => {
@@ -25,8 +30,9 @@ describe("Runtime", () => {
 
     describe("#createContext", () => {
         it("should work fine", async () => {
-            const ctx = await runtime.createContext(program, [], {});
+            const ctx = await runtime.createContext(program, [], { workingDirectory: folder });
             expect(ctx).to.be.ok;
+            expect(ctx.modules.length).to.equal(1);
         });
     });
 });

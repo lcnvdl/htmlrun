@@ -12,6 +12,7 @@ describe("Context", () => {
     describe("#addModule", () => {
         it("should work fine", () => {
             context.addModule({});
+            expect(context.modules.length).to.equal(1);
         });
     });
 });

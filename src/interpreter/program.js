@@ -1,4 +1,4 @@
-const cheerio = require('cheerio');
+const cheerio = require("cheerio");
 const HtmlParser = require("./html-parser");
 const ProgramImport = require("./program-import");
 

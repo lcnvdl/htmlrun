@@ -17,10 +17,12 @@ class Runtime {
     async createContext(program, args, settings) {
         let context = new Context(program, args);
 
+        settings = settings || {};
+
         for (let i = 0; i < program.imports.length; i++) {
             const imprt = program.imports[i];
-            let module = await Factory.createInstance(imprt.url);
-            context.addModule(module);
+            let mod = await Factory.createInstance(imprt.url, settings.workingDirectory);
+            context.addModule(mod);
         }
 
         return context;
