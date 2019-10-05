@@ -26,17 +26,44 @@ class Program {
                 let next = $(all[i + 1]);
 
                 if (!next.is("ul") && !next.is("ol")) {
-                    throw new Error("A ul or ol must exists after the import title");
+                    throw new Error(`An <ul> or <ol> must exists after the ${text} title`);
                 }
 
                 this._fillImports($, next);
+            }
+            else if (text === "run" || text === "instructions") {
+                let next = $(all[i + 1]);
+
+                if (!next.is("ul") && !next.is("ol")) {
+                    throw new Error(`An <ul> or <ol> must exists after the ${text} title`);
+                }
+
+                this._fillInstructions($, next);
             }
         });
     }
 
     /**
      * @param {CheerioStatic} $ $
-     * @param {CheerioSelector} list OL or UL
+     * @param {CheerioSelector} list <ol> or <ul>
+     */
+    _fillInstructions($, list) {
+        list.children("li").each((i, e) => {
+            const li = $(e);
+            if (li.text().trim() === "" || li.hasClass("comment")) {
+                return;
+            }
+
+            const parser = new HtmlParser($);
+
+            let words = parser.getChildrenWords(li);
+            this.instructions.push(words);
+        });
+    }
+
+    /**
+     * @param {CheerioStatic} $ $
+     * @param {CheerioSelector} list <ol> or <ul>
      */
     _fillImports($, list) {
         list.children("li").each((i, e) => {
