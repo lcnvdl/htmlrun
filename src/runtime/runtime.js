@@ -50,7 +50,7 @@ class Runtime {
             if (variable instanceof KlassMethod) {
                 /** @type {KlassMethod} */
                 const method = variable;
-                const definition = method.definitions["node"];
+                let definition = method.definitions["node"];
 
                 if (!definition) {
                     throw new Error(`The method ${name} is declared but not defined.`);
@@ -63,17 +63,15 @@ class Runtime {
                             throw new Error(`Wrong number of parameters calling the method ${name}`);
                         }
                         
-                        definition.replace(param.name, `"${m}"`);
+                        definition = definition.replace(param.name, `"${m}"`);
                     }
                 });
 
-                let result = context.lastValue;
+                let global = context.variables;
 
-                eval(`result = ${definition}`);
+                eval(`${definition}`);
 
-                if (typeof result !== "undefined") {
-                    context.lastValue = result;
-                }
+                context.variables = global;
             }
             else {
                 throw new Error("Not implemented");

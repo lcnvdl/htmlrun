@@ -9,7 +9,6 @@ class Context {
         this.program = program;
         this.arguments = args;
         this.variables = {};
-        this.lastValue = null;
     }
 
     /**

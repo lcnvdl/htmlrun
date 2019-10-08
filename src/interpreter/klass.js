@@ -29,12 +29,12 @@ class Klass {
         const table = $("table");
 
         if (table.length === 0) {
-            throw new Error("A class definition must be in an html table");
+            throw new Error("A class declaration must be in an html table");
         }
 
         let ths = table.find("thead").find("tr").find("th");
         if (ths.length === 0) {
-            throw new Error("A class definition must have its metadata in a thead");
+            throw new Error("A class declaration must have its metadata in a thead");
         }
 
         //  T Head

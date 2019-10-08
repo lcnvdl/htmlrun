@@ -6,7 +6,8 @@ const path = require("path");
 
 const Constructors = {
     class: () => new (require("./interpreter/klass"))(),
-    console: () => new (require("./interpreter/program"))()
+    console: () => new (require("./interpreter/program"))(),
+    definitions: () => new (require("./interpreter/definitions"))()
 };
 
 class Factory {
@@ -26,7 +27,7 @@ class Factory {
         return result;
     }
 
-    static createInstanceFromContent(content, workingDirectory) {
+    static createInstanceFromContent(content, workingDirectory, complement) {
         const $ = cheerio.load(content);
 
         let runtime;
