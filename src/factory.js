@@ -3,9 +3,10 @@ const cheerio = require("cheerio");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const Klass = require("./interpreter/klass");
 
 const Constructors = {
-    class: () => new (require("./interpreter/klass"))(),
+    class: () => new Klass(),
     console: () => new (require("./interpreter/program"))(),
     definitions: () => new (require("./interpreter/definitions"))()
 };
@@ -15,7 +16,7 @@ class Factory {
         const content = await this._getContent(url, workingDirectory);
         const result = Factory.createInstanceFromContent(content, workingDirectory);
 
-        if (result.metatags && result.metatags.runtime === "class") {
+        if (result instanceof Klass) {
             const definitionsUrl = url.substr(0, url.lastIndexOf(".html")) + ".def.html";
             const definitionsContent = await this.createInstance(definitionsUrl, workingDirectory);
 

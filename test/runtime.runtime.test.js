@@ -38,7 +38,6 @@ describe("Runtime", () => {
             }
             catch (err) {
                 error = err;
-                console.log(err);
             }
 
             expect(error).to.be.ok;

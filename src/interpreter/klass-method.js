@@ -1,3 +1,4 @@
+/** @typedef {import("./definition-method")} DefinitionMethod */
 /** @typedef {import("./klass-method-argument")} KlassMethodArgument */
 const KlassMember = require("./klass-member");
 
@@ -16,6 +17,15 @@ class KlassMethod extends KlassMember {
 
     get hasDefinitions() {
         return Object.keys(this.definitions).length > 0;
+    }
+
+    /**
+     * @param {DefinitionMethod} definition DefinitionMethod
+     */
+    applyDefinition(definition) {
+        Object.keys(definition.definitions).forEach(key => {
+            this.definitions[key] = definition.definitions[key];
+        });
     }
 }
 

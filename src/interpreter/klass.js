@@ -1,3 +1,5 @@
+/** @typedef {import("./definitions")} Definitions */
+
 const cheerio = require("cheerio");
 const HtmlParser = require("./html-parser");
 const KlassMethod = require("./klass-method");
@@ -32,13 +34,13 @@ class Klass {
             throw new Error("A class declaration must be in an html table");
         }
 
+        //  T Head
         let ths = table.find("thead").find("tr").find("th");
         if (ths.length === 0) {
             throw new Error("A class declaration must have its metadata in a thead");
         }
 
-        //  T Head
-        let name = ths.first().text();
+        let name = ths.first().text().trim();
 
         this.name = name;
 
@@ -109,8 +111,18 @@ class Klass {
         });
     }
 
-    applyDefinitions() {
-        throw new Error("Not implemented");
+    /**
+     * @param {Definitions} definitions Definitions
+     */
+    applyDefinitions(definitions) {
+        this.methods.forEach(method => {
+            let methodDefinition = definitions.methods[method.name];
+            if (!methodDefinition) {
+                throw new Error(`Definition not found for method "${method.name}"`);
+            }
+
+            method.applyDefinition(methodDefinition);
+        });
     }
 
     _addMethodDeclaration(declaration, description) {
@@ -127,7 +139,7 @@ class Klass {
         if (declaration.indexOf("(") !== -1) {
             params = declaration.substr(declaration.indexOf("(") + 1);
             params = params.substr(0, params.indexOf(")"));
-            declaration = declaration.substr(0, declaration.indexOf("("));
+            declaration = declaration.substr(0, declaration.indexOf("(")).trim();
         }
 
         const name = declaration;
