@@ -64,12 +64,15 @@ class Factory {
     static _getContent(url, workingDirectory) {
         return new Promise((resolve, reject) => {
 
-            if (url[0] === ".") {
+            if (url.indexOf("://") === -1) {
                 try {
                     let file = url;
+
                     if (workingDirectory) {
                         file = path.join(workingDirectory, file);
                     }
+
+                    console.log(file);
 
                     resolve(fs.readFileSync(file, "utf8"));
                 }
