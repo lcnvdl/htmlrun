@@ -72,8 +72,6 @@ class Factory {
                         file = path.join(workingDirectory, file);
                     }
 
-                    console.log(file);
-
                     resolve(fs.readFileSync(file, "utf8"));
                 }
                 catch (err) {

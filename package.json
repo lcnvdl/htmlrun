@@ -1,6 +1,6 @@
 {
   "name": "htmlrun",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Htmlrun is an interpreter for HTML",
   "main": "index.js",
   "directories": {
