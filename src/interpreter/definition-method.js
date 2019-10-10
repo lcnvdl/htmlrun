@@ -1,3 +1,5 @@
+const cheerio = require("cheerio");
+
 class DefinitionMethod {
     constructor(name, description) {
         this.name = name;
@@ -8,9 +10,10 @@ class DefinitionMethod {
     }
 
     /**
-     * @param {*} linea <li>
+     * @param {string} linea <li> content
      */
     addBehaviour(linea) {
+        const $ = cheerio.load(linea.trim());
         throw new Error("Not implemented");
     }
 

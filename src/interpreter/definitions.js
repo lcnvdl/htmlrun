@@ -53,7 +53,7 @@ class Definitions {
                         throw new Error(`Invalid section in the definition file: ${possibleSection}. The valid sections are: ${sections.join(", ")}.`);
                     }
 
-                    this._addBehaviour(methodName, tds[0]);
+                    this._addBehaviour(methodName, tds[0], $);
                 }
                 else {
                     section = possibleSection;
@@ -66,7 +66,7 @@ class Definitions {
                     this._addMethodDefinition(methodName, key, value);
                 }
                 else if (section === "behaviour") {
-                    this._addBehaviour(methodName, tds[1]);
+                    this._addBehaviour(methodName, tds[1], $);
                 }
                 else {
                     this._addParameterDefinition(methodName, key, value);
@@ -78,11 +78,16 @@ class Definitions {
         }
     }
 
-    _addBehaviour(methodName, parent) {
-        const items = $(parent).find("ol").children();
+    /**
+     * @param {string} methodName Method name
+     * @param {*} parent Parent
+     * @param {cheerio} $ CheerIO
+     */
+    _addBehaviour(methodName, parent, $) {
+        const items = $(parent).find("ol").children().toArray();
 
-        items.forEach(item => {
-            this.methods[methodName].addBehaviour(item);
+        items.map(item => $(item)).forEach(item => {
+            this.methods[methodName].addBehaviour(item.html());
         });
     }
 
