@@ -1,6 +1,7 @@
 const cheerio = require("cheerio");
 const HtmlParser = require("./html-parser");
 const ProgramImport = require("./program-import");
+const ProgramInstruction = require("./program-instruction");
 
 class Program {
     constructor() {
@@ -58,8 +59,10 @@ class Program {
 
             const parser = new HtmlParser($);
 
-            let words = parser.getChildrenWords(li);
-            this.instructions.push(words);
+            const words = parser.getChildrenWords(li);
+            let instruction = new ProgramInstruction().fromArray(words);
+
+            this.instructions.push(instruction);
         });
     }
 

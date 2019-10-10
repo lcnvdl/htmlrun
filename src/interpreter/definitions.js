@@ -2,6 +2,8 @@ const cheerio = require("cheerio");
 const HtmlParser = require("./html-parser");
 const DefinitionMethod = require("./definition-method");
 
+const sections = ["definitions", "parameters", "behaviour"]
+
 class Definitions {
     constructor() {
         this.methods = {};
@@ -46,17 +48,25 @@ class Definitions {
 
             if (tds.length === 1) {
                 let possibleSection = $(tds[0]).text().toLowerCase().trim();
-                if (possibleSection !== "parameters" && possibleSection !== "definitions") {
-                    throw new Error(`Invalid section in the definition file of the class ${this.name}: ${possibleSection}`);
-                }
+                if (sections.indexOf(possibleSection) === -1) {
+                    if (section !== "behaviour") {
+                        throw new Error(`Invalid section in the definition file: ${possibleSection}. The valid sections are: ${sections.join(", ")}.`);
+                    }
 
-                section = possibleSection;
+                    this._addBehaviour(methodName, tds[0]);
+                }
+                else {
+                    section = possibleSection;
+                }
             }
             else if (tds.length === 2) {
                 let [key, value] = parser.getWords(tds);
 
                 if (section === "definitions") {
                     this._addMethodDefinition(methodName, key, value);
+                }
+                else if (section === "behaviour") {
+                    this._addBehaviour(methodName, tds[1]);
                 }
                 else {
                     this._addParameterDefinition(methodName, key, value);
@@ -66,6 +76,14 @@ class Definitions {
                 throw new Error("Invalid row: it must have two columns.");
             }
         }
+    }
+
+    _addBehaviour(methodName, parent) {
+        const items = $(parent).find("ol").children();
+
+        items.forEach(item => {
+            this.methods[methodName].addBehaviour(item);
+        });
     }
 
     _addMethodDefinition(methodName, key, value) {

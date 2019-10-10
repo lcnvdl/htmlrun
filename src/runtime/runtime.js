@@ -1,5 +1,6 @@
 /* eslint-disable no-eval */
 /** @typedef {import('../interpreter/program')} Program */
+/** @typedef {import('../interpreter/program-instruction')} ProgramInstruction */
 
 const Factory = require("../factory");
 const Context = require("./context");
@@ -38,15 +39,17 @@ class Runtime {
             throw new Error("The context is not a program");
         }
 
+        /** @type {ProgramInstruction[]} */
         let instructions = context.program.instructions;
-        /** @type {[]} */
+        /** @type {ProgramInstruction} */
         let current;
 
         while (instructions.length > 0) {
             current = instructions.pop();
 
-            const name = current[0];
+            const name = current.name;
             let variable = context.getOrLoadVariable(name);
+
             if (variable instanceof KlassMethod) {
                 /** @type {KlassMethod} */
                 const method = variable;
@@ -56,15 +59,13 @@ class Runtime {
                     throw new Error(`The method ${name} is declared but not defined.`);
                 }
 
-                current.forEach((m, i) => {
-                    if (i > 0) {
-                        const param = method.parameters[i - 1];
-                        if (!param) {
-                            throw new Error(`Wrong number of parameters calling the method ${name}`);
-                        }
-                        
-                        definition = definition.replace(param.name, `"${m}"`);
+                current.args.forEach((m, i) => {
+                    const param = method.parameters[i];
+                    if (!param) {
+                        throw new Error(`Wrong number of parameters calling the method ${name}`);
                     }
+
+                    definition = definition.replace(param.name, `"${m}"`);
                 });
 
                 let global = context.variables;

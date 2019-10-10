@@ -22,6 +22,12 @@ class HtmlParser {
         return words;
     }
 
+    /**
+     * Get the words of the children elements. If there is a text instead of
+     * children elements, it will separate the text using spaces.
+     * @param {*} parent Parent
+     * @returns {string[]}
+     */
     getChildrenWords(parent) {
         let words;
         if (parent.children().toArray().length > 0) {
