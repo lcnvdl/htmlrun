@@ -98,6 +98,33 @@ describe("Program", () => {
                 expect(program.instructions.length).to.equal(1);
             });
 
+            it("'is an' should generate a set instruction", () => {
+                content = "<h1>Run</h1><ul><li><u>Guest</u> is an <i>User</i></li></ul>";
+                program.fill(content);
+                expect(program.instructions.length).to.equal(1);
+                expect(program.instructions[0].name).to.equal("Set");
+                expect(program.instructions[0].getArgument(0)).to.equal("Guest");
+                expect(program.instructions[0].getArgument(1)).to.equal("User");
+            });
+
+            it("':' should generate a set instruction", () => {
+                content = "<h1>Run</h1><ul><li><u>Name</u>: <i>My name</i></li></ul>";
+                program.fill(content);
+                expect(program.instructions.length).to.equal(1);
+                expect(program.instructions[0].name).to.equal("Set");
+                expect(program.instructions[0].getArgument(0)).to.equal("Name");
+                expect(program.instructions[0].getArgument(1)).to.equal("My name");
+            });
+
+            it("':' in variable name should generate a set instruction", () => {
+                content = "<h1>Run</h1><ul><li><u>Name:</u> <i>My name</i></li></ul>";
+                program.fill(content);
+                expect(program.instructions.length).to.equal(1);
+                expect(program.instructions[0].name).to.equal("Set");
+                expect(program.instructions[0].getArgument(0)).to.equal("Name");
+                expect(program.instructions[0].getArgument(1)).to.equal("My name");
+            });
+
             it("run should work fine", () => {
                 content = "<h1>Run</h1><ul><li><u>Log</u> <i>La vida es bella</i></li></ul>";
                 program.fill(content);
@@ -109,8 +136,10 @@ describe("Program", () => {
             it("sub instructions should work fine", () => {
                 content = "<h2>Run</h2><ul><li><u>Guest</u> is an <u>User</u><ul><li>Name: <i>Locky</i></li><li>E-mail: <i>locky@test.com</i></li></ul></li><li><u>Log</u> <i>Name of Guest</i></li></ul>";
                 program.fill(content);
-                expect(program.instructions.length).to.equal(1);
-                expect(program.instructions[0].instructions.length).to.equal(2);
+                expect(program.instructions.length).to.equal(2);
+                expect(program.instructions[0].children.length).to.equal(2);
+                expect(program.instructions[1].children.length).to.equal(0);
+                console.log(program.instructions[0]);
             });
         });
     });

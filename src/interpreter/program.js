@@ -52,18 +52,48 @@ class Program {
      */
     _fillInstructions($, list) {
         list.children("li").each((i, e) => {
-            const li = $(e);
+            let li = $(e);
             if (li.text().trim() === "" || li.hasClass("comment")) {
                 return;
             }
 
             const parser = new HtmlParser($);
 
+            const subInstructionsList = li.find("ul").length > 0 ? li.find("ul") : li.find("ol");
+
+            if (subInstructionsList && subInstructionsList.length > 0) {
+                li = li.remove("ul");
+            }
+
             const words = parser.getChildrenWords(li);
             let instruction = new ProgramInstruction().fromArray(words);
 
+            if (subInstructionsList && subInstructionsList.length > 0) {
+                instruction.children = this._getSubInstructions($, subInstructionsList);
+            }
+
             this.instructions.push(instruction);
         });
+    }
+
+    /**
+     * @param {CheerioStatic} $ $
+     * @param {CheerioSelector} list <ol> or <ul>
+     */
+    _getSubInstructions($, subInstructionsList) {
+        /** @type {ProgramInstruction[]} */
+        let subInstructions = [];
+
+        const parser = new HtmlParser($);
+
+        subInstructionsList.children().toArray().forEach(element => {
+            const li = $(element);
+            const words = parser.getChildrenWords(li);
+            let instruction = new ProgramInstruction().fromArray(words);
+            subInstructions.push(instruction);
+        });
+
+        return subInstructions;
     }
 
     /**
