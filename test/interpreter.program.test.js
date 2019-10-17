@@ -104,7 +104,8 @@ describe("Program", () => {
                 expect(program.instructions.length).to.equal(1);
                 expect(program.instructions[0].name).to.equal("Set");
                 expect(program.instructions[0].getArgument(0)).to.equal("Guest");
-                expect(program.instructions[0].getArgument(1)).to.equal("User");
+                expect(program.instructions[0].getArgument(1)).to.equal("=");
+                expect(program.instructions[0].getArgument(2)).to.equal("User");
             });
 
             it("':' should generate a set instruction", () => {
@@ -113,7 +114,8 @@ describe("Program", () => {
                 expect(program.instructions.length).to.equal(1);
                 expect(program.instructions[0].name).to.equal("Set");
                 expect(program.instructions[0].getArgument(0)).to.equal("Name");
-                expect(program.instructions[0].getArgument(1)).to.equal("My name");
+                expect(program.instructions[0].getArgument(1)).to.equal("=");
+                expect(program.instructions[0].getArgument(2)).to.equal("My name");
             });
 
             it("':' in variable name should generate a set instruction", () => {
@@ -122,7 +124,8 @@ describe("Program", () => {
                 expect(program.instructions.length).to.equal(1);
                 expect(program.instructions[0].name).to.equal("Set");
                 expect(program.instructions[0].getArgument(0)).to.equal("Name");
-                expect(program.instructions[0].getArgument(1)).to.equal("My name");
+                expect(program.instructions[0].getArgument(1)).to.equal("=");
+                expect(program.instructions[0].getArgument(2)).to.equal("My name");
             });
 
             it("run should work fine", () => {

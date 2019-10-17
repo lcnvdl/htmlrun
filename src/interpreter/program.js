@@ -59,10 +59,21 @@ class Program {
 
             const parser = new HtmlParser($);
 
-            const subInstructionsList = li.find("ul").length > 0 ? li.find("ul") : li.find("ol");
+            let subInstructionsList = li.find("ul").length > 0 ? li.find("ul") : li.find("ol");
 
             if (subInstructionsList && subInstructionsList.length > 0) {
-                li = li.remove("ul");
+
+                let aux = $(subInstructionsList.html());
+                
+                subInstructionsList.remove();
+
+                // li = li.remove("ul").remove("ol");
+
+                subInstructionsList = aux;
+
+                if (li.html().indexOf("<ol>") !== -1 || li.html().indexOf("<ul>") !== -1) {
+                    throw new Error("Cannot clean children instructions");
+                }
             }
 
             const words = parser.getChildrenWords(li);
