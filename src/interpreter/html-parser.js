@@ -3,6 +3,10 @@ class HtmlParser {
      * @param {Cheerio} $ 
      */
     constructor($) {
+        if (!$) {
+            throw new Error("Invalid operation");
+        }
+        
         this.$ = $;
     }
 

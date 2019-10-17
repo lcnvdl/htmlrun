@@ -1,7 +1,7 @@
 const cheerio = require("cheerio");
 const HtmlParser = require("./html-parser");
 const ProgramImport = require("./program-import");
-const ProgramInstruction = require("./program-instruction");
+const InstructionParser = require("./instruction-parser");
 
 class Program {
     constructor() {
@@ -51,67 +51,8 @@ class Program {
      * @param {CheerioSelector} list <ol> or <ul>
      */
     _fillInstructions($, list) {
-        list.children("li").each((i, e) => {
-            let li = $(e);
-            if (li.text().trim() === "" || li.hasClass("comment")) {
-                return;
-            }
-
-            const parser = new HtmlParser($);
-
-            let subInstructionsList = li.find("ul").length > 0 ? li.find("ul") : li.find("ol");
-
-            if (subInstructionsList && subInstructionsList.length > 0) {
-
-                let aux = $(subInstructionsList.html());
-
-                subInstructionsList.remove();
-
-                // li = li.remove("ul").remove("ol");
-
-                subInstructionsList = aux;
-
-                if (li.html().indexOf("<ol>") !== -1 || li.html().indexOf("<ul>") !== -1) {
-                    throw new Error("Cannot clean children instructions");
-                }
-            }
-
-            let words = parser.getChildrenWords(li);
-            li.children().toArray().forEach(m => $(m).remove());
-            const textInTheMiddle = li.text().trim();
-
-            if (textInTheMiddle !== "") {
-                words = [words[0], textInTheMiddle, ...words.slice(1)];
-            }
-
-            let instruction = new ProgramInstruction().fromArray(words);
-
-            if (subInstructionsList && subInstructionsList.length > 0) {
-                instruction.children = this._getSubInstructions($, subInstructionsList);
-            }
-
-            this.instructions.push(instruction);
-        });
-    }
-
-    /**
-     * @param {CheerioStatic} $ $
-     * @param {CheerioSelector} list <ol> or <ul>
-     */
-    _getSubInstructions($, subInstructionsList) {
-        /** @type {ProgramInstruction[]} */
-        let subInstructions = [];
-
-        const parser = new HtmlParser($);
-
-        subInstructionsList.children().toArray().forEach(element => {
-            const li = $(element);
-            const words = parser.getChildrenWords(li);
-            let instruction = new ProgramInstruction().fromArray(words);
-            subInstructions.push(instruction);
-        });
-
-        return subInstructions;
+        const parser = new InstructionParser($);
+        parser.getInstructions(list).forEach(m => this.instructions.push(m));
     }
 
     /**
