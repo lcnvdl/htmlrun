@@ -64,7 +64,7 @@ class Program {
             if (subInstructionsList && subInstructionsList.length > 0) {
 
                 let aux = $(subInstructionsList.html());
-                
+
                 subInstructionsList.remove();
 
                 // li = li.remove("ul").remove("ol");
@@ -76,7 +76,14 @@ class Program {
                 }
             }
 
-            const words = parser.getChildrenWords(li);
+            let words = parser.getChildrenWords(li);
+            li.children().toArray().forEach(m => $(m).remove());
+            const textInTheMiddle = li.text().trim();
+
+            if (textInTheMiddle !== "") {
+                words = [words[0], textInTheMiddle, ...words.slice(1)];
+            }
+
             let instruction = new ProgramInstruction().fromArray(words);
 
             if (subInstructionsList && subInstructionsList.length > 0) {

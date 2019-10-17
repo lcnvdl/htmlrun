@@ -16,6 +16,8 @@ class ProgramInstruction {
     fromArray(arr) {
 
         let processedArr = [];
+        
+        const setInstruction = [":", "is a", "is an"];
 
         if (arr.length > 0) {
             if (arr[0][arr[0].length - 1] === ":") {
@@ -25,7 +27,7 @@ class ProgramInstruction {
                 
                 arr.slice(1).forEach(m => processedArr.push(m));
             }
-            else if (arr[1] === ":") {
+            else if (arr[1] && setInstruction.includes(arr[1].toLowerCase())) {
                 processedArr.push("Set");
                 processedArr.push(arr[0]);
                 processedArr.push("=");

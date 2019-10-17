@@ -108,6 +108,16 @@ describe("Program", () => {
                 expect(program.instructions[0].getArgument(2)).to.equal("User");
             });
 
+            it("'is a' should generate a set instruction", () => {
+                content = "<h1>Run</h1><ul><li><u>Firulais</u> is an <i>Dog</i></li></ul>";
+                program.fill(content);
+                expect(program.instructions.length).to.equal(1);
+                expect(program.instructions[0].name).to.equal("Set");
+                expect(program.instructions[0].getArgument(0)).to.equal("Firulais");
+                expect(program.instructions[0].getArgument(1)).to.equal("=");
+                expect(program.instructions[0].getArgument(2)).to.equal("Dog");
+            });
+
             it("':' should generate a set instruction", () => {
                 content = "<h1>Run</h1><ul><li><u>Name</u>: <i>My name</i></li></ul>";
                 program.fill(content);
