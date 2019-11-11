@@ -67,7 +67,7 @@ describe("Runtime", () => {
         it("should work fine", async () => {
             const ctx = await runtime.createContext(program, [], { workingDirectory: folder });
             expect(ctx.variables.Log).to.be.ok;
-            ctx.variables.Log.definitions.node = "global.result = 100;";
+            ctx.getVariable("Log").definitions.node = "global.result = 100;";
             runtime.run(ctx);
             expect(ctx.variables.result).to.equal(100);
         });

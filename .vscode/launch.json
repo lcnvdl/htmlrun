@@ -26,7 +26,16 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Example 2",
+            "name": "Example 1 - Hello World",
+            "program": "${workspaceFolder}\\index.js",
+            "args": [
+                "./examples/01-hello-world.html"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Example 2 - Classes",
             "program": "${workspaceFolder}\\index.js",
             "args": [
                 "./examples/02-classes.html"

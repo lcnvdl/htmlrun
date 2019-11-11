@@ -2,6 +2,7 @@
 
 const Klass = require("../interpreter/klass");
 const KlassMethod = require("../interpreter/klass-method");
+const ContextVariable = require("./context-variable");
 
 class Context {
     constructor(program, args) {
@@ -32,17 +33,25 @@ class Context {
                 }
             }
 
-            this.variables[imprt.alias] = definition;
+            this.setVariable(imprt.alias, definition, { readOnly: true });
         }
         else {
-            this.variables[imprt.name] = definition;
+            this.setVariable(imprt.name, definition, { readOnly: true });
         }
         return this;
     }
 
+    getVariable(name) {
+        if (typeof this.variables[name] !== "undefined") {
+            return this.variables[name].value;
+        }
+
+        return undefined;
+    }
+
     getOrLoadVariable(name) {
         if (typeof this.variables[name] !== "undefined") {
-            return this.variables[name];
+            return this.variables[name].value;
         }
 
         if (this.modules.some(m => m.alias === name)) {
@@ -51,6 +60,22 @@ class Context {
         else {
             throw new Error(`The value ${name} doesn't exists in the current context.`);
         }
+    }
+
+    /**
+     * @param {string} key Key
+     * @param {*} value Value
+     * @param {Object} [settings] Settings
+     * @param {boolean} [settings.readOnly] Read Only
+     */
+    setVariable(key, value, settings) {
+        const existing = this.variables[key];
+
+        if (existing && existing.readOnly) {
+            throw new Error(`The variable ${key} is already declared.`);
+        }
+
+        this.variables[key] = new ContextVariable(value, settings);
     }
 }
 
