@@ -15,4 +15,18 @@ describe("Context", () => {
             expect(context.modules.length).to.equal(1);
         });
     });
+
+    describe("#getOrLoadVariable", () => {
+        it("should fail if variable doesn't exists", () => {
+            try {
+                context.getOrLoadVariable("ne");
+            }
+            catch (err) {
+                expect(err).to.be.ok;
+                return;
+            }
+
+            expect(false).to.be.true;
+        });
+    });
 });
