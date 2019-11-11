@@ -152,7 +152,6 @@ describe("Program", () => {
                 expect(program.instructions.length).to.equal(2);
                 expect(program.instructions[0].children.length).to.equal(2);
                 expect(program.instructions[1].children.length).to.equal(0);
-                console.log(program.instructions[0]);
             });
         });
     });

@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const HtmlParser = require("./html-parser");
+const InstructionParser = require("./instruction-parser");
 const DefinitionMethod = require("./definition-method");
 
 const sections = ["definitions", "parameters", "behaviour"]
@@ -84,10 +85,18 @@ class Definitions {
      * @param {cheerio} $ CheerIO
      */
     _addBehaviour(methodName, parent, $) {
-        const items = $(parent).find("ol").children().toArray();
+        const children = $(parent).children().toArray().map(m => $(m));
 
-        items.map(item => $(item)).forEach(item => {
-            this.methods[methodName].addBehaviour(item.html());
+        children.forEach(child => {
+            if (!child.is("ul") && !child.is("ol")) {
+                throw new Error("An <ul> or <ol> must exists in the behaviour section");
+            }
+
+            const parser = new InstructionParser($);
+
+            parser.getInstructions(child).forEach(instruction => {
+                this.methods[methodName].addBehaviour(instruction);
+            });
         });
     }
 

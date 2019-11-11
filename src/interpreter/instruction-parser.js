@@ -32,12 +32,12 @@ class InstructionParser extends HtmlParser {
     }
 
     /**
-     * @param {CheerioSelector} list <ol> or <ul>
+     * @param {CheerioSelector} listItem <li>
      */
-    getInstruction(li) {
-        const subInstructionsList = this._getSubInstructionsList(li);
+    getInstruction(listItem) {
+        const subInstructionsList = this._getSubInstructionsList(listItem);
 
-        const words = this._getWordsForInstructions(li);
+        const words = this._getWordsForInstructions(listItem);
         let instruction = new ProgramInstruction().fromArray(words);
 
         if (subInstructionsList && subInstructionsList.length > 0) {
@@ -63,10 +63,10 @@ class InstructionParser extends HtmlParser {
     }
 
     /**
-     * @param {CheerioSelector} list <ol> or <ul>
+     * @param {CheerioSelector} listItem <li>
      */
-    _getSubInstructionsList(list) {
-        let subInstructionsList = list.find("ul").length > 0 ? list.find("ul") : list.find("ol");
+    _getSubInstructionsList(listItem) {
+        let subInstructionsList = listItem.find("ul").length > 0 ? listItem.find("ul") : listItem.find("ol");
 
         if (subInstructionsList && subInstructionsList.length > 0) {
             let aux = this.$(subInstructionsList.html());

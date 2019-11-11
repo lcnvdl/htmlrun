@@ -45,7 +45,7 @@ class Runtime {
         let current;
 
         while (instructions.length > 0) {
-            current = instructions.pop();
+            current = instructions.shift();
 
             const name = current.name;
             let variable = context.getOrLoadVariable(name);

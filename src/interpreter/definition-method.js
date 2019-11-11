@@ -1,4 +1,4 @@
-const cheerio = require("cheerio");
+/** @typedef {import("./program-instruction")} ProgramInstruction */
 
 class DefinitionMethod {
     constructor(name, description) {
@@ -10,11 +10,10 @@ class DefinitionMethod {
     }
 
     /**
-     * @param {string} linea <li> content
+     * @param {ProgramInstruction} instruction ProgramInstruction
      */
-    addBehaviour(linea) {
-        const $ = cheerio.load(linea.trim());
-        throw new Error("Not implemented");
+    addBehaviour(instruction) {
+        this.behaviour.push(instruction);
     }
 
     /**
