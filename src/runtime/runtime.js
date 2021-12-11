@@ -65,7 +65,12 @@ class Runtime {
                         throw new Error(`Wrong number of parameters calling the method ${name}`);
                     }
 
-                    definition = definition.replace(param.name, `"${m}"`);
+                    if (param.type === "text") {
+                        definition = definition.replace(param.name, `"${m}"`);
+                    }
+                    else {
+                        definition = definition.replace(param.name, `${m}`);
+                    }
                 });
 
                 let global = context.variables;

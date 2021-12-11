@@ -14,7 +14,6 @@ class ProgramInstruction {
      * @param {[]} arr Array
      */
     fromArray(arr) {
-
         let processedArr = [];
         
         const setInstruction = [":", "is a", "is an"];
